@@ -25,6 +25,8 @@ function PostForm({post}){
     // when the form gets submitted
     const submit = async (data) => {
         // if the user wants to update a post
+        console.log("hi");
+        
         if(post){
             // if there is an image in the data submitted then upload the image to appwrite
             const file = data.image[0] ? await service.uploadFile(data.image[0]) : null
@@ -51,16 +53,23 @@ function PostForm({post}){
              // if image uploaded then add the fileId 
             if(file){
                 data.featuredImage = file.$id
+                const dbPost = await service.createPost({
+                    ...data,
+                    userId: userData.$id
+                });
+                if(dbPost){
+                    navigate(`/post/${dbPost.$id}`)
+                }
             }
 
             // create a new post and add it to appwrite
-            const dbPost = await service.createPost({
-                ...data,
-                userId: userData.$id
-            })
-            if(dbPost){
-                navigate(`/post/${dbPost.$id}`)
-            }
+            // const dbPost = await service.createPost({
+            //     ...data,
+            //     userId: userData.$id
+            // })
+            // if(dbPost){
+            //     navigate(`/post/${dbPost.$id}`)
+            // }
         }
     }
 
